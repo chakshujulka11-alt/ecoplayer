@@ -1,6 +1,6 @@
 # Eco Player
 
-A fast, local-only music player for Windows. Built with Electron + React + TypeScript + Vite. No Spotify, no YouTube, no downloads — just your local files, played offline.
+A fast, local-only music player for Windows. Built with Electron + React + TypeScript + Vite. Works on desktop and mobile (touch). No Spotify, no YouTube, no downloads — just your local files, played offline.
 
 ![Eco Player](https://img.shields.io/badge/Electron-43-blue?logo=electron) ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript) ![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)
 
@@ -12,7 +12,9 @@ A fast, local-only music player for Windows. Built with Electron + React + TypeS
 - **Favorites** — star songs, view most-played and recently-added charts
 - **Volume boost** — Web Audio gain with limiter (up to 3×)
 - **Visualizer** — canvas bars / wave / mirror, synced to playback
-- **Themes** — dark, light, AMOLED, custom; solid accent color; background image with blur + dim
+- **Themes** — black / white default, AMOLED, custom; **lime accent**; solid accent color; background image with blur + dim
+- **Responsive** — collapsible sidebar on mobile, stacked layout on small screens, touch-friendly 44px+ targets
+- **Touch** — works on touchscreens; scrollable import progress; swipe-friendly lists
 - **Metadata editing** — edit title, artist, album, genre, year; replace cover art
 - **Duplicate finder** — exact (content hash) and likely (metadata) matches; trash duplicates safely
 - **Settings persisted** — everything saved to a local SQLite database
@@ -34,14 +36,14 @@ A fast, local-only music player for Windows. Built with Electron + React + TypeS
 
 ## Design direction
 
-Flat Zinc Minimal: solid colors, sharp 2px corners, crisp 1px borders, no gradients, no glassmorphism, no neon, no shadows, purposeful motion only.
+Flat Zinc Minimal: **black / white default with lime accent**, solid colors, sharp 2px corners, crisp 1px borders, no gradients, no glassmorphism, no neon, no shadows, purposeful motion only. Responsive: desktop sidebar + mobile stacked layout, touch-friendly targets throughout.
 
 ## Getting started
 
 ### Prerequisites
 
 - Node.js (LTS)
-- Windows (primary target)
+- Windows (primary target, desktop & mobile via Capacitor web view)
 
 ### Install
 

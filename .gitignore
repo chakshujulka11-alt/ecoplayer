@@ -22,5 +22,7 @@ test-results/
 *.ico
 *.png
 resources/
-build/
+build/*
+!build/icon.ico
+!build/icon.png
 .opencode/

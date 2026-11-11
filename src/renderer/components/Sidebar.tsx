@@ -11,6 +11,7 @@ interface SidebarProps {
   onImportFiles: () => void
   onImportFolder: () => void
   busy: boolean
+  mobile?: boolean
 }
 
 const NAV = [
@@ -21,7 +22,7 @@ const NAV = [
   { to: '/settings', label: 'Settings', icon: Settings, end: false }
 ] as const
 
-export function Sidebar({ playlists, onCreatePlaylist, onImportFiles, onImportFolder, busy }: SidebarProps): React.JSX.Element {
+export function Sidebar({ playlists, onCreatePlaylist, onImportFiles, onImportFolder, busy, mobile }: SidebarProps): React.JSX.Element {
   const [draft, setDraft] = useState('')
   const [creating, setCreating] = useState(false)
 
@@ -33,13 +34,13 @@ export function Sidebar({ playlists, onCreatePlaylist, onImportFiles, onImportFo
   }
 
   return (
-    <aside className="flex w-60 shrink-0 flex-col gap-4 overflow-y-auto border-r border-border bg-card p-4">
+    <aside className={`flex ${mobile ? 'h-full w-72' : 'w-60 shrink-0'} flex-col gap-4 overflow-y-auto border-r border-border bg-card p-4`}>
       <div className="flex flex-col gap-2">
-        <Button variant="default" size="sm" onClick={onImportFiles} disabled={busy}>
-          <Plus /> Add files
+        <Button variant="default" size={mobile ? 'default' : 'sm'} onClick={onImportFiles} disabled={busy} className={mobile ? 'h-11 min-h-[44px]' : ''}>
+          <Plus className={mobile ? 'w-5 h-5' : ''} /> Add files
         </Button>
-        <Button variant="secondary" size="sm" onClick={onImportFolder} disabled={busy}>
-          <FolderOpen /> Add folder
+        <Button variant="secondary" size={mobile ? 'default' : 'sm'} onClick={onImportFolder} disabled={busy} className={mobile ? 'h-11 min-h-[44px]' : ''}>
+          <FolderOpen className={mobile ? 'w-5 h-5' : ''} /> Add folder
         </Button>
       </div>
 
@@ -51,12 +52,12 @@ export function Sidebar({ playlists, onCreatePlaylist, onImportFiles, onImportFo
             end={item.end}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-2 rounded px-3 py-2 text-sm font-medium transition-colors hover:bg-accent',
+                `flex items-center gap-2 rounded px-3 ${mobile ? 'py-3 min-h-[48px]' : 'py-2'} text-sm font-medium transition-colors hover:bg-accent`,
                 isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
               )
             }
           >
-            <item.icon /> {item.label}
+            <item.icon className={mobile ? 'w-5 h-5' : ''} /> {item.label}
           </NavLink>
         ))}
       </nav>
@@ -67,10 +68,10 @@ export function Sidebar({ playlists, onCreatePlaylist, onImportFiles, onImportFo
           <button
             type="button"
             onClick={() => setCreating(true)}
-            className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            className="rounded p-1.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             aria-label="Create playlist"
           >
-            <Plus />
+            <Plus className="w-4 h-4" />
           </button>
         </div>
         {creating && (
@@ -87,7 +88,7 @@ export function Sidebar({ playlists, onCreatePlaylist, onImportFiles, onImportFo
               }
             }}
             placeholder="Playlist name"
-            className="mx-1 rounded border border-input bg-background px-3 py-1.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring"
+            className={`mx-1 rounded border border-input bg-background px-3 ${mobile ? 'py-2.5 min-h-[44px] text-base' : 'py-1.5 text-sm'} outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring`}
           />
         )}
         {playlists.slice(0, 8).map((playlist) => (
@@ -96,12 +97,12 @@ export function Sidebar({ playlists, onCreatePlaylist, onImportFiles, onImportFo
             to={`/playlists/${playlist.id}`}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-2 rounded px-3 py-2 text-left text-sm transition-colors hover:bg-accent',
+                `flex items-center gap-2 rounded px-3 py-2 text-left text-sm transition-colors hover:bg-accent`,
                 isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
               )
             }
           >
-            <ListMusic />
+            <ListMusic className="w-4 h-4" />
             <span className="flex-1 truncate">{playlist.name}</span>
             <span className="text-xs text-muted-foreground">{playlist.songCount}</span>
           </NavLink>

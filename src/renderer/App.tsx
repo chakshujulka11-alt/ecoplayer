@@ -34,6 +34,8 @@ export default function App(): React.JSX.Element {
   const [busy, setBusy] = useState(false)
   const [progress, setProgress] = useState<ImportProgress | null>(null)
   const [ready, setReady] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const settingsLoaded = useRef(false)
   const persistTimer = useRef<number | null>(null)
 
@@ -74,6 +76,21 @@ export default function App(): React.JSX.Element {
     },
     [refreshAll]
   )
+
+  // Detect mobile (touch + small viewport) for responsive layout.
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768 || ('ontouchstart' in window))
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // Close sidebar when navigating on mobile.
+  useEffect(() => {
+    if (!isMobile) return
+    const unblock = () => setSidebarOpen(false)
+    return unblock
+  }, [isMobile])
 
   // Initial load: settings first (so the correct theme paints immediately),
   // then the library. Content renders only after settings arrive.
@@ -157,40 +174,95 @@ export default function App(): React.JSX.Element {
       <div
         className={`app-shell relative text-foreground ${backgroundActive ? 'bg-transparent app-bg-on' : 'bg-background'}`}
       >
-        <TitleBar />
-        <Sidebar
-          playlists={playlists}
-          onCreatePlaylist={(name) => void createPlaylist(name)}
-          onImportFiles={() => void importFiles()}
-          onImportFolder={() => void importFolder()}
-          busy={busy}
-        />
-          <main className={`min-w-0 overflow-y-auto overflow-x-clip ${density === 'compact' ? 'density-compact' : ''}`}>
-            {!ready && (
-              <div className="flex h-full items-center justify-center" aria-label="Loading">
-                <span className="inline-block h-6 w-6 animate-spin rounded border-2 border-muted-foreground border-t-transparent" />
-              </div>
-            )}
-            {ready && (
-            <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/library" element={<Library onStatus={setStatus} />} />
-            <Route path="/playlists" element={<Playlists />} />
-            <Route
-              path="/playlists/:id"
-              element={<PlaylistDetail onStatus={setStatus} onChanged={refreshAll} />}
+        <TitleBar onMenuClick={() => setSidebarOpen((open) => !open)} isMobile={isMobile} />
+        {/* Mobile: overlay sidebar. Desktop: fixed sidebar column. */}
+        {isMobile ? (
+          <>
+            <div
+              className={`fixed inset-0 z-30 bg-background/90 ${sidebarOpen ? 'block' : 'hidden'}`}
+              onClick={() => setSidebarOpen(false)}
             />
-              <Route path="/duplicates" element={<Duplicates onStatus={setStatus} />} />
-              <Route path="/settings" element={<Settings onStatus={setStatus} />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-            )}
-          </main>
+            <aside
+              className={`fixed left-0 top-0 bottom-0 z-40 w-72 bg-card border-r border-border shadow-lg transform transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                <span className="text-sm font-semibold">Menu</span>
+                <button
+                  type="button"
+                  onClick={() => setSidebarOpen(false)}
+                  className="rounded p-1 text-muted-foreground hover:bg-accent"
+                >
+                  <span className="sr-only">Close menu</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+              <Sidebar
+                playlists={playlists}
+                onCreatePlaylist={(name) => { void createPlaylist(name); setSidebarOpen(false) }}
+                onImportFiles={() => { void importFiles(); setSidebarOpen(false) }}
+                onImportFolder={() => { void importFolder(); setSidebarOpen(false) }}
+                busy={busy}
+                mobile
+              />
+            </aside>
+            <main className="min-w-0 overflow-y-auto overflow-x-clip pt-12 pb-24">
+              {!ready && (
+                <div className="flex h-full items-center justify-center" aria-label="Loading">
+                  <span className="inline-block h-6 w-6 animate-spin rounded border-2 border-muted-foreground border-t-transparent" />
+                </div>
+              )}
+              {ready && (
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/library" element={<Library onStatus={setStatus} />} />
+                  <Route path="/playlists" element={<Playlists />} />
+                  <Route path="/playlists/:id" element={<PlaylistDetail onStatus={setStatus} onChanged={refreshAll} />} />
+                  <Route path="/duplicates" element={<Duplicates onStatus={setStatus} />} />
+                  <Route path="/settings" element={<Settings onStatus={setStatus} />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              )}
+            </main>
+          </>
+        ) : (
+          <>
+            <Sidebar
+              playlists={playlists}
+              onCreatePlaylist={(name) => void createPlaylist(name)}
+              onImportFiles={() => void importFiles()}
+              onImportFolder={() => void importFolder()}
+              busy={busy}
+            />
+            <main className={`min-w-0 overflow-y-auto overflow-x-clip ${density === 'compact' ? 'density-compact' : ''}`}>
+              {!ready && (
+                <div className="flex h-full items-center justify-center" aria-label="Loading">
+                  <span className="inline-block h-6 w-6 animate-spin rounded border-2 border-muted-foreground border-t-transparent" />
+                </div>
+              )}
+              {ready && (
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/library" element={<Library onStatus={setStatus} />} />
+                  <Route path="/playlists" element={<Playlists />} />
+                  <Route path="/playlists/:id" element={<PlaylistDetail onStatus={setStatus} onChanged={refreshAll} />} />
+                  <Route path="/duplicates" element={<Duplicates onStatus={setStatus} />} />
+                  <Route path="/settings" element={<Settings onStatus={setStatus} />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              )}
+            </main>
+          </>
+        )}
         <div className="col-span-2 shrink-0">
-          {progress && (
-            <div className="border-t border-border px-6 py-2" role="status" aria-label="Import progress">
+          {sidebarOpen && isMobile && (
+            <div className="pointer-events-none fixed inset-0 z-10 flex items-center justify-center border-2 border-dashed border-primary bg-background/90">
+              <p className="text-sm font-medium text-primary">Drop audio files or folders to import</p>
+            </div>
+          )}
+          {!sidebarOpen && progress && (
+            <div role="status" className="border-t border-border px-4 py-2 sm:px-6 text-xs text-muted-foreground">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className="truncate">
+                <span className="truncate sm:max-w-none">
                   Importing {progress.processed}/{progress.total} — {progress.current.split(/[\\/]/).pop()}
                 </span>
                 <span className="tabular-nums">{progressPercent}%</span>
@@ -200,7 +272,7 @@ export default function App(): React.JSX.Element {
               </div>
             </div>
           )}
-          <div role="status" className="min-h-6 border-t border-border px-6 py-1 text-xs text-muted-foreground">
+          <div role="status" className="min-h-6 border-t border-border px-4 py-1 sm:px-6 text-xs text-muted-foreground">
             {status ?? ''}
           </div>
           <PlayerBar

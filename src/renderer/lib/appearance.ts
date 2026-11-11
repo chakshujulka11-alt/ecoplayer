@@ -20,7 +20,7 @@ export function hexToHslTriplet(hex: string): string {
 }
 
 export const ACCENT_PRESETS = [
-  { name: 'Blue', hex: '#3b82f6' },
+  { name: 'Lime', hex: '#a3e635' },
   { name: 'Green', hex: '#22c55e' },
   { name: 'Purple', hex: '#a855f7' },
   { name: 'Orange', hex: '#f97316' },
@@ -30,9 +30,9 @@ export const ACCENT_PRESETS = [
 
 export const BACKGROUND_PRESETS = [
   { id: 'none', name: 'None', css: '' },
-  { id: 'midnight', name: 'Midnight', css: 'hsl(222 60% 12%)' },
+  { id: 'midnight', name: 'Midnight', css: 'hsl(0 0% 10%)' },
   { id: 'forest', name: 'Forest', css: 'hsl(150 50% 10%)' },
-  { id: 'ocean', name: 'Ocean', css: 'hsl(210 70% 12%)' }
+  { id: 'ocean', name: 'Ocean', css: 'hsl(0 0% 8%)' }
 ] as const
 
 export type BackgroundPresetId = (typeof BACKGROUND_PRESETS)[number]['id']
