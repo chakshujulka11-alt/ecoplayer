@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Eco Player</string>
+    <string name="title_activity_main">Eco Player</string>
+    <string name="package_name">com.ecoplayer.app</string>
+    <string name="custom_url_scheme">com.ecoplayer.app</string>
+</resources>
