@@ -185,15 +185,15 @@ export default function App(): React.JSX.Element {
             <aside
               className={`fixed left-0 top-0 bottom-0 z-40 w-72 bg-card border-r border-border shadow-lg transform transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
-              <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-                <span className="text-sm font-semibold">Menu</span>
+              <div className="flex items-center justify-between px-4 py-4 border-b border-border bg-card/95 backdrop-blur">
+                <span className="text-base font-semibold tracking-tight">Menu</span>
                 <button
                   type="button"
                   onClick={() => setSidebarOpen(false)}
-                  className="rounded p-1 text-muted-foreground hover:bg-accent"
+                  className="w-10 h-10 rounded-lg border border-border bg-background flex items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground transition-all"
+                  aria-label="Close menu"
                 >
-                  <span className="sr-only">Close menu</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>
               <Sidebar

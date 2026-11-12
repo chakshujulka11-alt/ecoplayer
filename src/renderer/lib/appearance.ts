@@ -20,7 +20,7 @@ export function hexToHslTriplet(hex: string): string {
 }
 
 export const ACCENT_PRESETS = [
-  { name: 'Lime', hex: '#a3e635' },
+  { name: 'Neon', hex: '#39ff14' },
   { name: 'Green', hex: '#22c55e' },
   { name: 'Purple', hex: '#a855f7' },
   { name: 'Orange', hex: '#f97316' },
