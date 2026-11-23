@@ -88,6 +88,10 @@ export interface AppSettings {
   visualizerStyle: VisualizerStyle
   /** Visualizer sensitivity multiplier, 0.5..3. */
   visualizerSensitivity: number
+  /** Automatically import music from the user's Music folder on first launch. */
+  autoDetect: boolean
+  /** User-configured folders to scan when auto-detect runs (web/Android fallback). */
+  autoDetectFolders: string[]
 }
 
 export interface UpdateSongMetadata {
@@ -158,4 +162,6 @@ export interface RendererApi {
   moveSongToTrash(id: number): Promise<IpcResult<void>>
   /** Dev only: wipe the database + covers and restart. No-op in packaged builds. */
   resetDatabase(): Promise<IpcResult<void>>
+  /** Scan common Music folders for songs and import them into the library. */
+  autoDetectSongs(): Promise<IpcResult<ScanSummary>>
 }

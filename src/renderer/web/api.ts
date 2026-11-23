@@ -402,6 +402,16 @@ const webApi: RendererApi = {
     bridge(async () => {
       await resetWebDatabase()
       window.location.reload()
+    }),
+  autoDetectSongs: () =>
+    bridge(async (): Promise<ScanSummary> => {
+      const settings = await readWebSettings()
+      const dirs: string[] = []
+      if (settings.autoDetectFolders && Array.isArray(settings.autoDetectFolders)) {
+        dirs.push(...settings.autoDetectFolders.filter((d): d is string => typeof d === 'string'))
+      }
+      if (dirs.length === 0) return { scanned: 0, added: 0, updated: 0, skipped: 0, errors: [] }
+      return scanFiles(filesForKeys(dirs))
     })
 }
 

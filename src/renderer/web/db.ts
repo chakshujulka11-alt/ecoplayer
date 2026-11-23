@@ -583,7 +583,9 @@ const DEFAULT_SETTINGS: AppSettings = {
   backgroundBlur: 8,
   backgroundDim: 0.55,
   visualizerStyle: 'bars',
-  visualizerSensitivity: 1
+  visualizerSensitivity: 1,
+  autoDetect: false,
+  autoDetectFolders: []
 }
 
 const THEMES: AppSettings['theme'][] = ['dark', 'light', 'amoled', 'custom']
@@ -629,7 +631,11 @@ function normalizeSettings(stored: unknown): AppSettings {
       DEFAULT_SETTINGS.visualizerSensitivity,
       0.5,
       3
-    )
+    ),
+    autoDetect: typeof parsed.autoDetect === 'boolean' ? parsed.autoDetect : DEFAULT_SETTINGS.autoDetect,
+    autoDetectFolders: Array.isArray(parsed.autoDetectFolders)
+      ? parsed.autoDetectFolders.filter((v): v is string => typeof v === 'string')
+      : DEFAULT_SETTINGS.autoDetectFolders
   }
 }
 

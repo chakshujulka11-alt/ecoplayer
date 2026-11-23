@@ -14,7 +14,9 @@ const DEFAULT_SETTINGS: AppSettings = {
   backgroundBlur: 8,
   backgroundDim: 0.55,
   visualizerStyle: 'bars',
-  visualizerSensitivity: 1
+  visualizerSensitivity: 1,
+  autoDetect: false,
+  autoDetectFolders: []
 }
 
 const THEMES: Theme[] = ['dark', 'light', 'amoled', 'custom']
@@ -68,7 +70,11 @@ export function readSettings(): AppSettings {
       DEFAULT_SETTINGS.visualizerSensitivity,
       0.5,
       3
-    )
+    ),
+    autoDetect: typeof parsed.autoDetect === 'boolean' ? parsed.autoDetect : DEFAULT_SETTINGS.autoDetect,
+    autoDetectFolders: Array.isArray(parsed.autoDetectFolders)
+      ? parsed.autoDetectFolders.filter((v): v is string => typeof v === 'string')
+      : DEFAULT_SETTINGS.autoDetectFolders
   }
 }
 
@@ -99,7 +105,10 @@ export function writeSettings(patch: Partial<AppSettings>): AppSettings {
     visualizerSensitivity:
       patch.visualizerSensitivity === undefined
         ? current.visualizerSensitivity
-        : clampNumber(patch.visualizerSensitivity, current.visualizerSensitivity, 0.5, 3)
+        : clampNumber(patch.visualizerSensitivity, current.visualizerSensitivity, 0.5, 3),
+    autoDetect: patch.autoDetect === undefined ? current.autoDetect : Boolean(patch.autoDetect),
+    autoDetectFolders:
+      patch.autoDetectFolders === undefined ? current.autoDetectFolders : patch.autoDetectFolders
   }
   const upsert = getDatabase().prepare(
     'INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value'
@@ -119,5 +128,7 @@ export function writeSettings(patch: Partial<AppSettings>): AppSettings {
   save('backgroundDim', next.backgroundDim)
   save('visualizerStyle', next.visualizerStyle)
   save('visualizerSensitivity', next.visualizerSensitivity)
+  save('autoDetect', next.autoDetect)
+  save('autoDetectFolders', next.autoDetectFolders)
   return next
 }

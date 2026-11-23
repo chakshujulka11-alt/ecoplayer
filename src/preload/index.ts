@@ -141,7 +141,8 @@ const api: RendererApi = {
   setBackgroundImage: () => invoke<AppSettings>(IpcChannels.setBackgroundImage),
   clearBackgroundImage: () => invoke<AppSettings>(IpcChannels.clearBackgroundImage),
   moveSongToTrash: (id: number) => invoke<void>(IpcChannels.moveSongToTrash, id),
-  resetDatabase: () => invoke<void>(IpcChannels.resetDatabase)
+  resetDatabase: () => invoke<void>(IpcChannels.resetDatabase),
+  autoDetectSongs: () => invoke<ScanSummary>(IpcChannels.autoDetectSongs)
 }
 
 contextBridge.exposeInMainWorld('api', api)

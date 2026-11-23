@@ -30,7 +30,8 @@ export const IpcChannels = {
   setBackgroundImage: 'settings:set-background-image',
   clearBackgroundImage: 'settings:clear-background-image',
   moveSongToTrash: 'file:move-to-trash',
-  resetDatabase: 'dev:reset-database'
+  resetDatabase: 'dev:reset-database',
+  autoDetectSongs: 'library:auto-detect-songs'
 } as const
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]

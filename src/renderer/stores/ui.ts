@@ -33,6 +33,8 @@ interface UiState {
   backgroundDim: number
   visualizerStyle: VisualizerStyle
   visualizerSensitivity: number
+  autoDetect: boolean
+  autoDetectFolders: string[]
   /** Apply a full settings snapshot without persisting (startup). */
   hydrate: (settings: AppSettings) => void
   /** Apply + persist appearance changes. */
@@ -58,6 +60,8 @@ export const useUiStore = create<UiState>()((set, get) => ({
   backgroundDim: 0.55,
   visualizerStyle: 'bars',
   visualizerSensitivity: 1,
+  autoDetect: false,
+  autoDetectFolders: [],
 
   hydrate: (settings) => {
     set({
@@ -70,7 +74,9 @@ export const useUiStore = create<UiState>()((set, get) => ({
       backgroundBlur: settings.backgroundBlur,
       backgroundDim: settings.backgroundDim,
       visualizerStyle: settings.visualizerStyle,
-      visualizerSensitivity: settings.visualizerSensitivity
+      visualizerSensitivity: settings.visualizerSensitivity,
+      autoDetect: settings.autoDetect,
+      autoDetectFolders: settings.autoDetectFolders
     })
     applyAll({ theme: settings.theme, accent: settings.accent, fontSize: settings.fontSize })
   },

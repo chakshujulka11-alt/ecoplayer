@@ -113,7 +113,9 @@ export function Settings({ onStatus }: SettingsProps): React.JSX.Element {
         backgroundBlur: 8,
         backgroundDim: 0.55,
         visualizerStyle: 'bars',
-        visualizerSensitivity: 1
+        visualizerSensitivity: 1,
+        autoDetect: false,
+        autoDetectFolders: []
       })
       // Also drops any custom background file, then syncs from server truth.
       const settings = await callApi((api) => api.clearBackgroundImage())
@@ -382,6 +384,19 @@ export function Settings({ onStatus }: SettingsProps): React.JSX.Element {
             </div>
           ))}
         </div>
+        <label className="flex items-center gap-3 text-sm cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={ui.autoDetect}
+            onChange={(event) => ui.update({ autoDetect: event.target.checked })}
+            aria-label="Auto-detect songs on first launch"
+            className="rounded border-border bg-background text-primary accent-primary"
+          />
+          <span>Auto-detect songs in Music folders</span>
+        </label>
+        <p className="text-xs text-muted-foreground">
+          On first launch, scan your Music folders and add any songs found to the library.
+        </p>
       </section>
 
       {import.meta.env.DEV && (

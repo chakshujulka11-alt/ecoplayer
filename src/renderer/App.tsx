@@ -13,12 +13,13 @@ import { Home } from './views/Home'
 import { Library } from './views/Library'
 import { Playlists, PlaylistDetail } from './views/Playlists'
 import { Settings } from './views/Settings'
-import type { ImportProgress } from '../shared/types'
+import type { AppSettings, ImportProgress } from '../shared/types'
 
 export default function App(): React.JSX.Element {
   useKeyboardShortcuts()
   const setSongs = usePlayerStore((s) => s.setSongs)
   const setPlaylists = usePlayerStore((s) => s.setPlaylists)
+  const songs = usePlayerStore((s) => s.songs)
   const setVolume = usePlayerStore((s) => s.setVolume)
   const setBoost = usePlayerStore((s) => s.setBoost)
   const volume = usePlayerStore((s) => s.volume)
@@ -96,8 +97,9 @@ export default function App(): React.JSX.Element {
   // then the library. Content renders only after settings arrive.
   useEffect(() => {
     void (async () => {
+      let settings: AppSettings | null = null
       try {
-        const settings = await callApi((api) => api.getSettings())
+        settings = await callApi((api) => api.getSettings())
         setVolume(settings.volume)
         setBoost(settings.boost)
         hydrateUi(settings)
@@ -108,8 +110,20 @@ export default function App(): React.JSX.Element {
         setReady(true)
       }
       await refreshAll()
+      // Auto-detect songs from the user's Music folders on first launch when the library is empty.
+      if (settings && settings.autoDetect && songs.length === 0) {
+        setStatus('Detecting songs in your Music folders…')
+        try {
+          const summary = await callApi((api) => api.autoDetectSongs())
+          setStatus(
+            `Auto-detected ${summary.added} new songs (${summary.skipped} skipped, ${summary.errors.length} errors).`
+          )
+        } catch (err) {
+          setStatus(err instanceof Error ? err.message : 'Auto-detect failed.')
+        }
+      }
     })()
-  }, [refreshAll, setVolume, setBoost, hydrateUi])
+  }, [refreshAll, setVolume, setBoost, hydrateUi, playlists.length])
 
   // Persist volume/boost changes, debounced (skip until stored values loaded).
   useEffect(() => {
@@ -183,7 +197,7 @@ export default function App(): React.JSX.Element {
               onClick={() => setSidebarOpen(false)}
             />
             <aside
-              className={`fixed left-0 top-0 bottom-0 z-40 w-72 bg-card border-r border-border shadow-lg transform transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+              className={`fixed right-0 top-0 bottom-0 z-40 w-72 bg-card border-l border-border shadow-lg transform transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}
             >
               <div className="flex items-center justify-between px-4 py-4 border-b border-border bg-card/95 backdrop-blur">
                 <span className="text-base font-semibold tracking-tight">Menu</span>

@@ -542,4 +542,28 @@ export function registerIpcHandlers(getWindow: () => BrowserWindow | null): void
       return fail(err)
     }
   })
+
+  ipcMain.handle(IpcChannels.autoDetectSongs, async (): Promise<IpcResult<ScanSummary>> => {
+    try {
+      const musicDirs: string[] = []
+      const home = app.getPath('home')
+      const music = app.getPath('music')
+      const candidates = [path.join(home, 'Music'), path.join(home, 'music'), music]
+      for (const dir of candidates) {
+        if (dir && !musicDirs.includes(dir)) musicDirs.push(dir)
+      }
+      const existing = musicDirs.filter((dir) => {
+        try {
+          const stat = fs.statSync(dir)
+          return stat.isDirectory()
+        } catch {
+          return false
+        }
+      })
+      if (existing.length === 0) return fail('No music folders found to scan.')
+      return ok(await scanEntries(existing, getWindow))
+    } catch (err) {
+      return fail(err)
+    }
+  })
 }
